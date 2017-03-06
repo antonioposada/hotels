@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Hotel;
+use App\Entities\Hotel;
 
 class HotelRepository extends BaseRepository {
 

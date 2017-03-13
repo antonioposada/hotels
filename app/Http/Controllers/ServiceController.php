@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services;
+use App\Entities\Services;
 use Illuminate\Http\Request;
 
 

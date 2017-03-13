@@ -18,9 +18,20 @@ abstract class BaseRepository {
         return $this->getModel()->newQuery();
     }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+     */
     public function findOrFail($id)
     {
         return $this->newQuery()->findOrFail($id);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public function all(){
+        return $this->getModel()->all();
     }
 
 }

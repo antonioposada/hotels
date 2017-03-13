@@ -1,10 +1,9 @@
 <?php
 
-namespace App;
+namespace App\Entities;
 
-use Illuminate\Database\Eloquent\Model;
 
-class Services extends Model
+class Offers extends Entity
 {
     /**
      * The attributes that are mass assignable.
@@ -12,6 +11,7 @@ class Services extends Model
      * @var array
      */
     protected $fillable = [
-        'name'
+        'percentage',
+        'rate_id'
     ];
 }

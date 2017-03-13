@@ -9,7 +9,6 @@
 namespace App\Http\Controllers;
 
 
-use App\Http\Controllers\Api\HotelController;
 use App\Repositories\HotelRepository;
 
 class WelcomeController

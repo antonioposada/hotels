@@ -14,8 +14,11 @@ class Hotel extends Entity
         'name', 'category', 'address',
     ];
 
+    /**
+ * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+ */
     public function services()
     {
-        return $this->hasMany(HotelServices::getClass());
+        return $this->belongsToMany(Services::getClass(), 'hotel_services','hotel_id','service_id')->withTimestamps();
     }
 }

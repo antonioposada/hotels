@@ -1,10 +1,9 @@
 <?php
 
-namespace App;
+namespace App\Entities;
 
-use Illuminate\Database\Eloquent\Model;
 
-class Rates extends Model
+class Rates extends Entity
 {
     /**
      * The attributes that are mass assignable.
@@ -20,6 +19,6 @@ class Rates extends Model
      */
     public function offers()
     {
-        return $this->hasMany(Offers::class);
+        return $this->hasMany(Offers::getClass());
     }
 }

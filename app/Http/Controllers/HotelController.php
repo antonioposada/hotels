@@ -3,19 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Entities\Hotel;
+use App\Entities\HotelServices;
+use App\Repositories\HotelRepository;
+use App\Repositories\ServiceRepository;
 use Illuminate\Http\Request;
 
 class HotelController extends Controller
 {
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
+    private $hotelRepository;
+    private $serviceRepository;
 
+    /**
+     * HotelController constructor.
+     * @param HotelRepository $hotelRepository
+     */
+    public function __construct(HotelRepository $hotelRepository, ServiceRepository $serviceRepository)
+    {
+        $this->hotelRepository = $hotelRepository;
+        $this->serviceRepository = $serviceRepository;
     }
 
     /**
@@ -109,11 +115,44 @@ class HotelController extends Controller
      */
     public function services($hotel_id){
 
-        $hotel = Hotel::find($hotel_id);
+        $hotel = $this->hotelRepository->findOrFail($hotel_id);
+        $services = $this->serviceRepository->getServicesWithoutHotel($hotel_id);
 
-        dd($hotel->services());
+        return view('config/hotelservices',compact('hotel','services'));
+    }
 
-        return view('config/hotelservices');
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function saveService(Request $request){
+        $data = $request->only(['service_id','hotel_id']);
+
+        $this->validate($request, [
+            'hotel_id' => 'required|numeric',
+            'service_id' => 'required|numeric|min:1'
+        ]);
+
+        $hotel = HotelServices::create($data);
+
+        return $this->services($data['hotel_id']);
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function deleteService(Request $request){
+        $data = $request->only(['service_id','hotel_id']);
+
+        $this->validate($request, [
+            'hotel_id' => 'required|numeric',
+            'service_id' => 'required|numeric|min:1'
+        ]);
+
+        $this->hotelRepository->deleteService($data['hotel_id'],$data['service_id']);
+
+        return $this->services($data['hotel_id']);
     }
 
 }

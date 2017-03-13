@@ -1,15 +1,15 @@
 <template>
     <tr class="animated">
         <template v-if="! editing">
-            <td>{{ hotel.name }}</td>
-            <td>{{ hotel.category }}</td>
-            <td>{{ hotel.address }}</td>
+            <td>{{ room.name }}</td>
+            <td>{{ room_type_name }}</td>
+            <td>{{ hotel_name }}</td>
             <td>
                 <a href="#" @click.prevent="edit()">
                     <span class="glyphicon glyphicon-pencil" title="Edit" aria-hidden="true"></span>
                 </a>
                 <a href="#" @click.prevent="config()">
-                    <span class="glyphicon glyphicon-home" title="Services" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-eur" title="Rates" aria-hidden="true"></span>
                 </a>
                 <a href="#" @click.prevent="remove()">
                     <span class="glyphicon glyphicon-trash" title="Delete" aria-hidden="true"></span>
@@ -21,10 +21,10 @@
                 <input type="text" v-model="draft.name" class="form-control">
             </td>
             <td>
-                <input type="text" v-model="draft.category" class="form-control">
+                <select-room-type :roomtypes="roomtypes" :room="draft"></select-room-type>
             </td>
             <td>
-                <input type="text" v-model="draft.address" class="form-control">
+                <select-hotel :hotels="hotels" :room="draft"></select-hotel>
             </td>
             <td>
                 <a href="#" @click.prevent="update()">
@@ -42,7 +42,7 @@
 var utils = require('./../utils');
 
 export default {
-    props: ['hotel'],
+    props: ['room','hotels','roomtypes'],
     data: function() {
         return {
             editing: false,
@@ -50,10 +50,20 @@ export default {
             draft: {}
         };
     },
+    computed: {
+        hotel_name: function () {
+            var hotel = utils.findById(this.hotels, this.room.hotel_id);
+            return hotel != null ? hotel.name : 'h';
+        },
+        room_type_name: function () {
+            var roomtype = utils.findById(this.roomtypes, this.room.room_type_id);
+            return roomtype != null ? roomtype.name : 'r';
+        }
+    },
     methods: {
         edit: function () {
             this.errors = [];
-            this.draft = JSON.parse(JSON.stringify(this.hotel));
+            this.draft = JSON.parse(JSON.stringify(this.room));
             this.editing = true;
         },
         cancel: function () {
@@ -61,15 +71,14 @@ export default {
         },
         update: function () {
             this.errors = [];
-            this.$emit('update-hotel', this);
+            this.$emit('update-room', this);
         },
         remove: function () {
-            this.$emit('delete-hotel', this.hotel);
+            this.$emit('delete-room', this.room);
         },
         config: function (){
-            location.href = 'hotelservices/'+this.hotel.id;
+            location.href = 'roomrates/'+this.room.id;
         }
-
     }
 }
 </script>

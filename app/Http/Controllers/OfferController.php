@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Offers;
+use App\Entities\Offers;
 use Illuminate\Http\Request;
-use App\Rates;
+use App\Entities\Rates;
 
 class OfferController extends Controller
 {

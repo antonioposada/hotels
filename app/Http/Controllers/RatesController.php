@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Rates;
+use App\Entities\Rates;
 use Illuminate\Http\Request;
 
 class RatesController extends Controller

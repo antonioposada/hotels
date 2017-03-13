@@ -38,6 +38,9 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::get('hotelservices/{id}', 'HotelController@services');
+    Route::post('hotelservices/{id}', 'HotelController@saveService');
+    Route::post('deleteservice/', 'HotelController@deleteService');
+
 
     Route::get('offers', function () {
         return view('config/offers');
@@ -50,6 +53,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('rooms', function () {
         return view('config/rooms');
     });
+
+    Route::get('roomrates/{id}', 'RoomController@rates');
+    Route::post('roomrates/{id}', 'RoomController@saveRate');
+    Route::post('deleterate/', 'RoomController@deleteRate');
+
 
 });
 

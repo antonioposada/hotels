@@ -2,21 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\RateRepository;
+use App\Repositories\RoomRepository;
+use App\Entities\RoomRates;
 use Illuminate\Http\Request;
-use App\Room;
-use App\Hotel;
-use App\RoomType;
+use App\Entities\Room;
+use App\Entities\Hotel;
+use App\Entities\RoomType;
 
 class RoomController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
 
+    private $roomRepository;
+    private $rateRepository;
+
+    /**
+     * RoomController constructor.
+     * @param HotelRepository $hotelRepository
+     */
+    public function __construct(RoomRepository $roomRepository, RateRepository $rateRepository)
+    {
+        $this->roomRepository = $roomRepository;
+        $this->rateRepository = $rateRepository;
     }
 
     /**
@@ -78,6 +85,9 @@ class RoomController extends Controller
      */
     public function update(Request $request, Room $room)
     {
+
+        $data = $request->only(['name','room_type_id','hotel_id']);
+
         $this->validate($request, [
             'name' => 'required',
             'room_type_id' => 'required',
@@ -89,7 +99,7 @@ class RoomController extends Controller
 
         return [
             'success' => true,
-            'offer'    => $room,
+            'room'    => $room,
         ];
     }
 
@@ -106,6 +116,51 @@ class RoomController extends Controller
         return [
             'success' => true,
         ];
+    }
+
+    /**
+     * @param $room_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function rates($room_id){
+        $room = $this->roomRepository->findOrFail($room_id);
+        $rates = $this->rateRepository->getRatesWithoutRoom($room_id);
+
+        return view('config/roomrates',compact('room','rates'));
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function saveRate(Request $request){
+        $data = $request->only(['rate_id','room_id']);
+
+        $this->validate($request, [
+            'room_id' => 'required|numeric',
+            'rate_id' => 'required|numeric|min:1'
+        ]);
+
+        $roomRates = RoomRates::create($data);
+
+        return $this->rates($data['room_id']);
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function deleteRate(Request $request){
+        $data = $request->only(['rate_id','room_id']);
+
+        $this->validate($request, [
+            'room_id' => 'required|numeric',
+            'rate_id' => 'required|numeric|min:1'
+        ]);
+
+        $this->roomRepository->deleteRate($data['room_id'],$data['rate_id']);
+
+        return $this->rates($data['room_id']);
     }
 
 }
